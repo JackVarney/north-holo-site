@@ -1,18 +1,14 @@
 import north from './north';
 import SimplexNoise from 'simplex-noise';
-import { ensureIsProductOf, hsla, lerp, range } from '../utils';
+import { ensureIsProductOf, hsla, range } from '../utils';
 
-export default (canvas: HTMLCanvasElement, square_size = 12) => {
+const square_size = window.innerWidth / 200;
+const row_size = Math.sqrt(north.length);
+const col_size = Math.sqrt(north.length);
+const marginLeft = window.innerWidth - square_size * row_size;
+
+export default (canvas: HTMLCanvasElement) => {
   const simplex = new SimplexNoise();
-
-  const row_size = Math.sqrt(north.length);
-  const col_size = Math.sqrt(north.length);
-  console.log({ square_size });
-  const height = col_size * square_size;
-  const width = row_size * square_size;
-
-  canvas.width = width;
-  canvas.height = height;
 
   const instructions: {
     x: number;
@@ -45,7 +41,7 @@ export default (canvas: HTMLCanvasElement, square_size = 12) => {
       const yPos = y * square_size;
 
       ctx.fillStyle = colourPicker.getFill();
-      ctx.fillRect(xPos, yPos, square_size, square_size);
+      ctx.fillRect(marginLeft + xPos, yPos, square_size, square_size);
     }
 
     window.requestAnimationFrame(render);
@@ -88,7 +84,7 @@ export default (canvas: HTMLCanvasElement, square_size = 12) => {
         alpha += alphaInReverse ? -10 : 10;
       },
       getFill() {
-        return hsla(hue, 100, 80, lerp(0.7, 1, alpha / 1000));
+        return hsla(hue, 100, 80, 1);
       },
     };
   }
@@ -102,6 +98,7 @@ export default (canvas: HTMLCanvasElement, square_size = 12) => {
     }, 50);
   }
 
-  window.requestAnimationFrame(render);
   initialiseColourPickers();
+
+  return render;
 };
